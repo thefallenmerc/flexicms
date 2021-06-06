@@ -2,6 +2,8 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 import logger from "morgan";
 
+import cors from "cors";
+
 import webRouter from "./routes/web.route";
 import apiRouter from "./routes/app.route";
 
@@ -10,6 +12,9 @@ const app: Application = express();
 
 // load env variables
 dotenv.config();
+
+// add cors support
+app.use(cors());
 
 // add debug logger
 if (process.env.NODE_ENV !== "test") {
