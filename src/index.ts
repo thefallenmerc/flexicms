@@ -1,7 +1,11 @@
-import app from "./app";
+import initializeApp from "./app";
 
 const port = 5000;
 
-app.listen(port, () => {
-    console.log("Server running at " + port);
+// Initialize App
+initializeApp().then((app) => {
+    // listen to port
+    app.listen(port, () => {
+        console.log("Server running at " + port);
+    });
 });

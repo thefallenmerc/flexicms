@@ -1,8 +1,11 @@
 import express, { Application } from "express";
 import dotenv from "dotenv";
 import logger from "morgan";
+import path from "path";
 
 import cors from "cors";
+
+import database from "./config/database.config";
 
 import webRouter from "./routes/web.route";
 import apiRouter from "./routes/app.route";
@@ -10,20 +13,27 @@ import apiRouter from "./routes/app.route";
 // create app
 const app: Application = express();
 
-// load env variables
-dotenv.config();
+async function initializeApp(): Promise<Application> {
+    // load env variables
+    dotenv.config({ path: path.join(__dirname, ".env") });
 
-// add cors support
-app.use(cors());
+    // add cors support
+    app.use(cors());
 
-// add debug logger
-if (process.env.NODE_ENV !== "test") {
-    app.use(logger("dev"));
+    // initialize database
+    await database.init();
+
+    // add debug logger
+    if (process.env.NODE_ENV !== "test") {
+        app.use(logger("dev"));
+    }
+
+    // initialize routes
+    app.use("/", webRouter);
+    app.use("/api", apiRouter);
+
+    return app;
 }
 
-// initialize routes
-app.use("/", webRouter);
-app.use("/api", apiRouter);
-
 // export the app
-export default app;
+export default initializeApp;
