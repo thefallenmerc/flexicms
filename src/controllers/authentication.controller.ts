@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
 import Validator from "validatorjs";
+import jwt from "jsonwebtoken";
 
 export default class AuthenticationController {
     public static async register(req: Request, res: Response) {
@@ -66,16 +67,25 @@ export default class AuthenticationController {
             });
         }
 
+        // user token
+        const token = await jwt.sign(user, process.env.APP_KEY ?? "");
+
         // return response
-        return res.json({ message: "Login successful!", user: AuthenticationController.getUserResource(user) });
+        return res.json({ message: "Login successful!", user: AuthenticationController.getUserResource(user, token) });
     }
 
-    public static getUserResource(user: IUser) {
+    /**
+     * Get User Resource
+     * @param user IUser
+     * @param token string
+     */
+    public static getUserResource(user: IUser, token?: string) {
         return {
             id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
+            token,
         };
     }
 }
