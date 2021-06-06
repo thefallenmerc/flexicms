@@ -8,7 +8,7 @@ import cors from "cors";
 import database from "./config/database.config";
 
 import webRouter from "./routes/web.route";
-import apiRouter from "./routes/app.route";
+import apiRouter from "./routes/api.route";
 
 // create app
 const app: Application = express();
@@ -27,6 +27,9 @@ async function initializeApp(): Promise<Application> {
     if (process.env.NODE_ENV !== "test") {
         app.use(logger("dev"));
     }
+
+    app.use(express.urlencoded({ extended: true }));
+    app.use(express.json());
 
     // initialize routes
     app.use("/", webRouter);
