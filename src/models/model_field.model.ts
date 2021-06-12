@@ -7,6 +7,7 @@ interface IModelFieldInput {
     identifier: string;
     type: string;
     model: string;
+    validations: string;
     ref?: string;
 }
 
@@ -42,7 +43,11 @@ export default class ModelField {
         if (database.db) {
             // save user
             const result = await database.db.collection("model_fields").insertOne({
-                ...model,
+                identifier: model.identifier,
+                type: model.type,
+                model: model.model,
+                validations: model.validations,
+                ref: model.ref,
                 createdAt: new Date(),
                 updatedAt: new Date(),
             });
@@ -62,7 +67,11 @@ export default class ModelField {
         if (database.db) {
             const result = await database.db.collection("model_fields").insertMany(
                 models.map((model) => ({
-                    ...model,
+                    identifier: model.identifier,
+                    type: model.type,
+                    model: model.model,
+                    validations: model.validations,
+                    ref: model.ref,
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 }))

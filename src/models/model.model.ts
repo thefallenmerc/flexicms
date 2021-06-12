@@ -87,4 +87,25 @@ export default class Model {
             throw new Error("Database not initialized!");
         }
     }
+
+    public static async deleteOneByIndentifier(identifier: string) {
+        if (database.db) {
+            const model = await database.db.collection("models").findOne({ identifier });
+
+            // if there is result, delete fields too
+            if (model) {
+                // delete the model
+                await database.db.collection("models").deleteOne({ _id: model._id });
+                // delete the fields
+                // TODO: upgrade this
+                await database.db.collection("model_fields").deleteOne({ model: model._id });
+                // TODO: upgrade this
+                await database.db.collection("model_data").deleteOne({ model: model._id });
+            }
+
+            return model as IModelWithFields;
+        } else {
+            throw new Error("Database not initialized!");
+        }
+    }
 }

@@ -9,13 +9,14 @@ export default class ModelController {
      * Create a new model
      */
     public static async create(req: IUserRequest, res: Response) {
-        // validate the user
+        // validate the model
         const validator = new Validator(req.body, {
             name: "string|required|min:2",
             identifier: "string|required|min:2|alpha",
             fields: "required|array|min:1",
             "fields.*.identifier": "string|required|min:2|alpha",
             "fields.*.type": "string|required|in:" + Object.keys(ModelFieldType).join(","),
+            "fields.*.validations": "required|string",
             "fields.*.ref": "string|required_if:fields.*.type," + ModelFieldType.ref,
         });
 
@@ -25,6 +26,8 @@ export default class ModelController {
                 errors: validator.errors,
             });
         }
+
+        // TODO: add check to validate the validation rules
 
         // get the data
         const { name, identifier, fields } = req.body;
@@ -55,7 +58,10 @@ export default class ModelController {
         );
 
         // return response
-        return res.json({ message: "Model created", user: ModelController.getModelResource(model, modelFields) });
+        return res.json({
+            message: "Model created!",
+            user: ModelController.getModelResource(model, modelFields),
+        });
     }
 
     /**
@@ -70,8 +76,19 @@ export default class ModelController {
 
             // return response
             return res.json({
-                message: "Model created",
+                message: "All Models!",
                 models: await ModelController.getModelsResourceWithFields(models),
+            });
+        }
+    }
+
+    public static async delete(req: IUserRequest, res: Response) {
+        if (req.user) {
+            await Model.deleteOneByIndentifier(req.params.modelIdentifier);
+
+            // return response
+            return res.json({
+                message: "Model deleted!",
             });
         }
     }
