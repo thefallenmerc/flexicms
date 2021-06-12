@@ -4,6 +4,20 @@ import Validator from "validatorjs";
 import { IUserRequest } from "types/express";
 import ModelField, { IModelField, ModelFieldType } from "../models/model_field.model";
 
+// add validation rule validator
+Validator.register(
+    "rules",
+    (value) => {
+        try {
+            new Validator({ red: "RED" }, { red: value + "" }).check();
+            return true;
+        } catch (error) {
+            return false;
+        }
+    },
+    ":attribute are not valid rules!"
+);
+
 export default class ModelController {
     /**
      * Create a new model
@@ -16,7 +30,7 @@ export default class ModelController {
             fields: "required|array|min:1",
             "fields.*.identifier": "string|required|min:2|alpha",
             "fields.*.type": "string|required|in:" + Object.keys(ModelFieldType).join(","),
-            "fields.*.validations": "required|string",
+            "fields.*.validations": "required|string|rules",
             "fields.*.ref": "string|required_if:fields.*.type," + ModelFieldType.ref,
         });
 
@@ -113,8 +127,6 @@ export default class ModelController {
                 fields: await ModelField.findFieldsByModelId(model._id),
             });
         }
-
-        console.log([await ModelField.findFieldsByModelId("60c4285c79cc8f19ee8fbb69")]);
 
         return modelsWithFields;
     }
