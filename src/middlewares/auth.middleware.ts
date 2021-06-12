@@ -1,12 +1,12 @@
 import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
-import { IGetUserAuthInfoRequest } from "types/express";
+import { IUserRequest } from "types/express";
 import User, { IUser } from "../models/user.model";
 
 /**
  * Authenticate middleware
  */
-async function AuthMiddleware(req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) {
+async function AuthMiddleware(req: IUserRequest, res: Response, next: NextFunction) {
     // get the authorization header
     const { authorization } = req.headers;
 
