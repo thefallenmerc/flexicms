@@ -18,7 +18,8 @@ apiRouter.post("/admin/model", AuthMiddleware, ModelController.create);
 apiRouter.delete("/admin/model/:modelIdentifier", AuthMiddleware, ModelController.delete);
 
 // consumable routes
-apiRouter.get("/data/:modelIdentifier/", ModelController.getAll);
+apiRouter.get("/data/:modelIdentifier/", DataController.getAll);
 apiRouter.post("/data/:modelIdentifier/", DataController.add);
+apiRouter.delete("/data/:modelIdentifier/:dataIdentifier", DataController.delete);
 
 export default apiRouter;
